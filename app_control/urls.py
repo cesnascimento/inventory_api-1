@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import (
     InventoryView, ShopView, SummaryView, PurchaseView, SaleByShopView,
-    InventoryGroupView, SalePerformanceView, InvoiceView, InventoryCSVLoaderView
+    InventoryGroupView, SalePerformanceView, InvoiceView, InventoryCSVLoaderView, ColaboradorView
 )
 
 from rest_framework.routers import DefaultRouter
@@ -17,6 +17,7 @@ router.register('sales-by-shop', SaleByShopView, "sales-by-shop")
 router.register('group', InventoryGroupView, "group")
 router.register('top-selling', SalePerformanceView, "top-selling")
 router.register('invoice', InvoiceView, "invoice")
+router.register('colaborate', ColaboradorView, "colaborate")
 
 urlpatterns = [
     path("", include(router.urls))

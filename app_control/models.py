@@ -39,12 +39,35 @@ class InventoryGroup(models.Model):
         return self.name
 
 
+class Colaborador(models.Model):
+    name = models.CharField(max_length=100)
+    inventory_group = models.ForeignKey(InventoryGroup, on_delete=models.CASCADE)
+
+
 class Inventory(models.Model):
     created_by = models.ForeignKey(
         CustomUser, null=True, related_name="inventory_items",
         on_delete=models.SET_NULL
     )
-    code = models.CharField(max_length=10, unique=True, null=True)
+    local = models.ForeignKey(
+        InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
+    )
+    patriominio = models.PositiveIntegerField(null=True)
+    hostname = models.CharField(max_length=10, unique=True, null=True)
+    colaborador = models.ForeignKey(
+        Colaborador, related_name="colaborador", null=True, on_delete=models.SET_NULL
+    )
+    sistema_operacional = models.CharField(max_length=10, unique=True, null=True)
+    service_tag = models.CharField(max_length=10, unique=True, null=True)
+    nf_so = models.PositiveIntegerField(null=True)
+    empresa = models.CharField(max_length=10, unique=True, null=True)
+    marca = models.CharField(max_length=10, unique=True, null=True)
+    modelo = models.CharField(max_length=10, unique=True, null=True)
+    configuracao = models.TextField(max_length=10, unique=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    """ code = models.CharField(max_length=10, unique=True, null=True)
     photo = models.TextField(blank=True, null=True)
     group = models.ForeignKey(
         InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
@@ -54,31 +77,16 @@ class Inventory(models.Model):
     name = models.CharField(max_length=255)
     price = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+    updated_at = models.DateTimeField(auto_now=True) """
+    
     class Meta:
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        is_new = self.pk is None
-
-        if is_new:
-            self.remaining = self.total
-
+        action = f"added new group - '{self.name}'"
+        if self.pk is not None:
+            action = f"updated group from - '{self.old_name}' to '{self.name}'"
         super().save(*args, **kwargs)
-
-        if is_new:
-            id_length = len(str(self.id))
-            code_length = 6 - id_length
-            zeros = "".join("0" for i in range(code_length))
-            self.code = f"BOSE{zeros}{self.id}"
-            self.save()
-
-        action = f"added new inventory item with code - '{self.code}'"
-
-        if not is_new:
-            action = f"updated inventory item with code - '{self.code}'"
-
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
