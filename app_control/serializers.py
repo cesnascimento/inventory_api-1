@@ -48,6 +48,7 @@ class ShopSerializer(serializers.ModelSerializer):
 
 
 class ColabradorSerializer(serializers.ModelSerializer):
+    colab_id = serializers.CharField(write_only=True)
     created_by = CustomUserSerializer(read_only=True)
     created_by_id = serializers.CharField(write_only=True, required=False)
 

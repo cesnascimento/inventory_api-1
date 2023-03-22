@@ -17,7 +17,7 @@ import codecs
 
 
 class InventoryView(ModelViewSet):
-    queryset = Inventory.objects.select_related("group", "created_by")
+    queryset = Inventory.objects.select_related("local", "created_by")
     serializer_class = InventorySerializer
     permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
@@ -84,7 +84,7 @@ class InventoryGroupView(ModelViewSet):
 
 
 class ColaboradorView(ModelViewSet):
-    queryset = Colaborador.objects.select_related("created_by")
+    queryset = Colaborador.objects.select_related("inventory_group")
     serializer_class = ColabradorSerializer
     permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination

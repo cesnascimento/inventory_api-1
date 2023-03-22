@@ -42,6 +42,31 @@ class InventoryGroup(models.Model):
 class Colaborador(models.Model):
     name = models.CharField(max_length=100)
     inventory_group = models.ForeignKey(InventoryGroup, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_name = self.name
+
+    def save(self, *args, **kwargs):
+        action = f"added new group - '{self.name}'"
+        if self.pk is not None:
+            action = f"updated group from - '{self.old_name}' to '{self.name}'"
+        super().save(*args, **kwargs)
+        add_user_activity(self.created_by, action=action)
+
+    def delete(self, *args, **kwargs):
+        created_by = self.created_by
+        action = f"deleted group - '{self.name}'"
+        super().delete(*args, **kwargs)
+        add_user_activity(created_by, action=action)
+
+    def __str__(self):
+        return self.name
 
 
 class Inventory(models.Model):
@@ -52,7 +77,7 @@ class Inventory(models.Model):
     local = models.ForeignKey(
         InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
     )
-    patriominio = models.PositiveIntegerField(null=True)
+    patrimonio = models.PositiveIntegerField(null=True)
     hostname = models.CharField(max_length=10, unique=True, null=True)
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador", null=True, on_delete=models.SET_NULL
@@ -83,10 +108,22 @@ class Inventory(models.Model):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
-        action = f"added new group - '{self.name}'"
-        if self.pk is not None:
-            action = f"updated group from - '{self.old_name}' to '{self.name}'"
+        is_new = self.pk is None
+
         super().save(*args, **kwargs)
+
+        if is_new:
+            id_length = len(str(self.id))
+            code_length = 6 - id_length
+            zeros = "".join("0" for i in range(code_length))
+            self.code = f"BOSE{zeros}{self.id}"
+            self.save()
+
+        action = f"added new inventory item with code - '{self.patrimonio}'"
+
+        if not is_new:
+            action = f"updated inventory item with code - '{self.patrimonio}'"
+
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
@@ -96,7 +133,7 @@ class Inventory(models.Model):
         add_user_activity(created_by, action=action)
 
     def __str__(self):
-        return f"{self.name} - {self.code}"
+        return f"{self.modelo} - {self.patrimonio}"
 
 
 class Shop(models.Model):
