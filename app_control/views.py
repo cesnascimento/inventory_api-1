@@ -35,7 +35,7 @@ class InventoryView(ModelViewSet):
         if keyword:
             search_fields = (
                 "code", "created_by__fullname", "created_by__email", 
-                "group__name", "name"
+                "local__name", "name"
             )
             query = get_query(keyword, search_fields)
             return results.filter(query)
@@ -84,7 +84,8 @@ class InventoryGroupView(ModelViewSet):
 
 
 class ColaboradorView(ModelViewSet):
-    queryset = Colaborador.objects.select_related("inventory_group")
+    queryset = Colaborador.objects.select_related(
+        "created_by").prefetch_related("inventories")
     serializer_class = ColabradorSerializer
     permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination

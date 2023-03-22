@@ -40,9 +40,15 @@ class InventoryGroup(models.Model):
 
 
 class Colaborador(models.Model):
-    name = models.CharField(max_length=100)
-    inventory_group = models.ForeignKey(InventoryGroup, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    created_by = models.ForeignKey(
+        CustomUser, null=True, related_name="colaborador",
+        on_delete=models.SET_NULL
+    )
+    name = models.CharField(max_length=100, unique=True)
+    belongs_to = models.ForeignKey(
+        InventoryGroup, null=True, on_delete=models.SET_NULL, related_name="colab_relations"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -69,6 +75,40 @@ class Colaborador(models.Model):
         return self.name
 
 
+""" class Colaborador(models.Model):
+    created_by = models.ForeignKey(
+        CustomUser, null=True, related_name="colaboratte",
+        on_delete=models.SET_NULL
+    )
+    name = models.CharField(max_length=100)
+    inventory_group = models.ForeignKey(InventoryGroup, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_name = self.name
+
+    def save(self, *args, **kwargs):
+        action = f"added new colab - '{self.name}'"
+        if self.pk is not None:
+            action = f"updated colab from - '{self.old_name}' to '{self.name}'"
+        super().save(*args, **kwargs)
+        add_user_activity(self.created_by, action=action)
+
+    def delete(self, *args, **kwargs):
+        created_by = self.created_by
+        action = f"deleted colab - '{self.name}'"
+        super().delete(*args, **kwargs)
+        add_user_activity(created_by, action=action)
+
+    def __str__(self):
+        return self.name """
+
+
 class Inventory(models.Model):
     created_by = models.ForeignKey(
         CustomUser, null=True, related_name="inventory_items",
@@ -77,6 +117,9 @@ class Inventory(models.Model):
     local = models.ForeignKey(
         InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
     )
+    """ group = models.ForeignKey(
+        InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
+    ) """
     patrimonio = models.PositiveIntegerField(null=True)
     hostname = models.CharField(max_length=10, unique=True, null=True)
     colaborador = models.ForeignKey(
