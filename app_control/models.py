@@ -117,21 +117,18 @@ class Inventory(models.Model):
     local = models.ForeignKey(
         InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
     )
-    """ group = models.ForeignKey(
-        InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
-    ) """
-    patrimonio = models.PositiveIntegerField(null=True)
-    hostname = models.CharField(max_length=10, unique=True, null=True)
+    patrimonio = models.PositiveIntegerField(null=True, unique=True)
+    hostname = models.CharField(max_length=10, null=True, unique=True)
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador", null=True, on_delete=models.SET_NULL
     )
-    sistema_operacional = models.CharField(max_length=10, unique=True, null=True)
-    service_tag = models.CharField(max_length=10, unique=True, null=True)
-    nf_so = models.PositiveIntegerField(null=True)
-    empresa = models.CharField(max_length=10, unique=True, null=True)
-    marca = models.CharField(max_length=10, unique=True, null=True)
-    modelo = models.CharField(max_length=10, unique=True, null=True)
-    configuracao = models.TextField(max_length=10, unique=True, null=True)
+    sistema_operacional = models.CharField(max_length=10, null=True)
+    service_tag = models.CharField(max_length=10, null=True, unique=True)
+    nf_so = models.PositiveIntegerField(null=True, unique=True)
+    empresa = models.CharField(max_length=50, null=True)
+    marca = models.CharField(max_length=10, null=True)
+    modelo = models.CharField(max_length=10, null=True)
+    configuracao = models.TextField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -146,7 +143,64 @@ class Inventory(models.Model):
     price = models.FloatField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True) """
-    
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+
+        super().save(*args, **kwargs)
+
+        if is_new:
+            id_length = len(str(self.id))
+            code_length = 6 - id_length
+            zeros = "".join("0" for i in range(code_length))
+            self.code = f"BOSE{zeros}{self.id}"
+            self.save()
+
+        action = f"Adicionado novo item ao inventário com o patrimonio - '{self.patrimonio}'"
+
+        if not is_new:
+            action = f"Atualizado item ao inventário com o patrimonio - '{self.patrimonio}'"
+
+        add_user_activity(self.created_by, action=action)
+
+    def delete(self, *args, **kwargs):
+        created_by = self.created_by
+        action = f"Deletado equipamento - '{self.patrimonio}'"
+        super().delete(*args, **kwargs)
+        add_user_activity(created_by, action=action)
+
+    def __str__(self):
+        return f"{self.modelo} - {self.patrimonio}"
+
+
+class Inventory_Notebook(models.Model):
+    created_by = models.ForeignKey(
+        CustomUser, null=True, related_name="inventory_notebook_items",
+        on_delete=models.SET_NULL
+    )
+    local = models.ForeignKey(
+        InventoryGroup, related_name="inventories_notebook", null=True, on_delete=models.SET_NULL
+    )
+    patrimonio = models.PositiveIntegerField(null=True, unique=True)
+    hostname = models.CharField(max_length=10, null=True, unique=True)
+    colaborador = models.ForeignKey(
+        Colaborador, related_name="colaborador_notebook", null=True, on_delete=models.SET_NULL
+    )
+    sistema_operacional = models.CharField(max_length=10, null=True)
+    service_tag = models.CharField(max_length=10, null=True, unique=True)
+    nf_so = models.PositiveIntegerField(null=True, unique=True)
+    empresa = models.CharField(max_length=50, null=True)
+    marca = models.CharField(max_length=10, null=True)
+    modelo = models.CharField(max_length=10, null=True)
+    configuracao = models.TextField(max_length=100, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         ordering = ("-created_at",)
 
@@ -171,12 +225,114 @@ class Inventory(models.Model):
 
     def delete(self, *args, **kwargs):
         created_by = self.created_by
-        action = f"deleted inventory - '{self.code}'"
+        action = f"deleted inventory - '{self.patrimonio}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
 
     def __str__(self):
         return f"{self.modelo} - {self.patrimonio}"
+    
+
+class Inventory_Mobile(models.Model):
+    created_by = models.ForeignKey(
+        CustomUser, null=True, related_name="inventory_mobile_items",
+        on_delete=models.SET_NULL
+    )
+    patrimonio = models.PositiveIntegerField(null=True, unique=True)
+    marca = models.CharField(max_length=10, null=True)
+    modelo = models.CharField(max_length=10, null=True)
+    colaborador = models.ForeignKey(
+        Colaborador, related_name="colaborador_mobile", null=True, on_delete=models.SET_NULL
+    )
+    imei = models.CharField(max_length=500, null=True)
+    nf = models.CharField(max_length=50, null=True)
+    linha = models.CharField(max_length=50, null=True)
+    obs = models.TextField(max_length=500, null=True)
+
+
+    class Meta:
+        ordering = ("-created_by",)
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+
+        super().save(*args, **kwargs)
+
+        if is_new:
+            id_length = len(str(self.id))
+            code_length = 6 - id_length
+            zeros = "".join("0" for i in range(code_length))
+            self.code = f"BOSE{zeros}{self.id}"
+            self.save()
+
+        action = f"added new inventory item with patrimonio - '{self.patrimonio}'"
+
+        if not is_new:
+            action = f"updated inventory item with patrimonio - '{self.patrimonio}'"
+
+        add_user_activity(self.created_by, action=action)
+
+    def delete(self, *args, **kwargs):
+        created_by = self.created_by
+        action = f"deleted inventory - '{self.patrimonio}'"
+        super().delete(*args, **kwargs)
+        add_user_activity(created_by, action=action)
+
+    def __str__(self):
+        return f"{self.modelo} - {self.colaborador}"
+    
+
+class Inventory_Datacenter(models.Model):
+    created_by = models.ForeignKey(
+        CustomUser, null=True, related_name="inventory_datacenter_items",
+        on_delete=models.SET_NULL
+    )
+    ip = models.CharField(max_length=10, null=True, unique=True)
+    descricao = models.CharField(max_length=10, null=True)
+    hostname = models.CharField(max_length=10, null=True, unique=True)
+    colaborador = models.ForeignKey(
+        Colaborador, related_name="colaborador_datacenter", null=True, on_delete=models.SET_NULL
+    )
+    sistema_operacional = models.CharField(max_length=10, null=True)
+    service_tag = models.CharField(max_length=10, null=True, unique=True)
+    nf_so = models.PositiveIntegerField(null=True, unique=True)
+    empresa = models.CharField(max_length=50, null=True)
+    marca = models.CharField(max_length=10, null=True)
+    modelo = models.CharField(max_length=10, null=True)
+    configuracao = models.TextField(max_length=100, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+
+        super().save(*args, **kwargs)
+
+        if is_new:
+            id_length = len(str(self.id))
+            code_length = 6 - id_length
+            zeros = "".join("0" for i in range(code_length))
+            self.code = f"BOSE{zeros}{self.id}"
+            self.save()
+
+        action = f"added new inventory item with patrimonio - '{self.patrimonio}'"
+
+        if not is_new:
+            action = f"updated inventory item with patrimonio - '{self.patrimonio}'"
+
+        add_user_activity(self.created_by, action=action)
+
+    def delete(self, *args, **kwargs):
+        created_by = self.created_by
+        action = f"deleted inventory - '{self.patrimonio}'"
+        super().delete(*args, **kwargs)
+        add_user_activity(created_by, action=action)
+
+    def __str__(self):
+        return f"{self.modelo} - {self.colaborador}"
 
 
 class Shop(models.Model):
@@ -211,7 +367,7 @@ class Shop(models.Model):
     def __str__(self):
         return self.name
 
-    
+
 class Invoice(models.Model):
     created_by = models.ForeignKey(
         CustomUser, null=True, related_name="invoices",
@@ -236,7 +392,7 @@ class InvoiceItem(models.Model):
         Invoice, related_name="invoice_items", on_delete=models.CASCADE
     )
     item = models.ForeignKey(
-        Inventory, null=True, related_name="inventory_invoices", 
+        Inventory, null=True, related_name="inventory_invoices",
         on_delete=models.SET_NULL
     )
     item_name = models.CharField(max_length=255, null=True)
@@ -246,7 +402,8 @@ class InvoiceItem(models.Model):
 
     def save(self, *args, **kwargs):
         if self.item.remaining < self.quantity:
-            raise Exception(f"item with code {self.item.code} does not have enough quantity")
+            raise Exception(
+                f"item with code {self.item.code} does not have enough quantity")
 
         self.item_name = self.item.name
         self.item_code = self.item.code

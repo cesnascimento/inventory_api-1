@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Inventory, InventoryGroup, Shop, Invoice, InvoiceItem, Colaborador
+from .models import Inventory, InventoryGroup, Shop, Invoice, InvoiceItem, Colaborador, Inventory_Notebook, Inventory_Mobile
 from user_control.serializers import CustomUserSerializer
 from rest_framework import serializers
 
@@ -21,11 +21,12 @@ class InventoryGroupSerializer(serializers.ModelSerializer):
         return None
 
 
-class ColabradorSerializer(serializers.ModelSerializer):
+class ColaboradorSerializer(serializers.ModelSerializer):
     created_by = CustomUserSerializer(read_only=True)
     created_by_id = serializers.CharField(write_only=True, required=False)
     belongs_to = serializers.SerializerMethodField(read_only=True)
     belongs_to_id = serializers.CharField(write_only=True, required=False)
+    total_items = serializers.CharField(read_only=True, required=False)
 
     class Meta:
         model = Colaborador
@@ -41,12 +42,36 @@ class InventorySerializer(serializers.ModelSerializer):
     created_by = CustomUserSerializer(read_only=True)
     created_by_id = serializers.CharField(write_only=True, required=False)
     local = InventoryGroupSerializer(read_only=True)
-    colaborador = ColabradorSerializer(read_only=True)
+    colaborador = ColaboradorSerializer(read_only=True)
     local_id = serializers.CharField(write_only=True)
     colaborador_id = serializers.CharField(write_only=True)
 
     class Meta:
         model = Inventory
+        fields = "__all__"
+
+
+class InventoryNotebookSerializer(serializers.ModelSerializer):
+    created_by = CustomUserSerializer(read_only=True)
+    created_by_id = serializers.CharField(write_only=True, required=False)
+    local = InventoryGroupSerializer(read_only=True)
+    colaborador = ColaboradorSerializer(read_only=True)
+    local_id = serializers.CharField(write_only=True)
+    colaborador_id = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Inventory_Notebook
+        fields = "__all__"
+
+
+class InventoryMobileSerializer(serializers.ModelSerializer):
+    created_by = CustomUserSerializer(read_only=True)
+    created_by_id = serializers.CharField(write_only=True, required=False)
+    colaborador = ColaboradorSerializer(read_only=True)
+    colaborador_id = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Inventory_Mobile
         fields = "__all__"
 
 
