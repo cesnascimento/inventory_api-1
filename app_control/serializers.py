@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Inventory, InventoryGroup, Shop, Invoice, InvoiceItem, Colaborador, Inventory_Notebook, Inventory_Mobile
+from .models import Inventory, InventoryGroup, Shop, Invoice, InvoiceItem, Colaborador, Inventory_Notebook, Inventory_Mobile, Inventory_Datacenter
 from user_control.serializers import CustomUserSerializer
 from rest_framework import serializers
 
@@ -72,6 +72,17 @@ class InventoryMobileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Inventory_Mobile
+        fields = "__all__"
+
+
+class InventoryDatacenterSerializer(serializers.ModelSerializer):
+    created_by = CustomUserSerializer(read_only=True)
+    created_by_id = serializers.CharField(write_only=True, required=False)
+    colaborador = ColaboradorSerializer(read_only=True)
+    colaborador_id = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Inventory_Datacenter
         fields = "__all__"
 
 

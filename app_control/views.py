@@ -1,9 +1,12 @@
+from django.http import HttpResponse
+import psycopg2
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import viewsets
 from .serializers import (
     Inventory, InventorySerializer, InventoryGroupSerializer, InventoryGroup,
     Shop, ShopSerializer, Invoice, InvoiceSerializer, InventoryWithSumSerializer,
     ShopWithAmountSerializer, InvoiceItem, Colaborador, ColaboradorSerializer, 
-    Inventory_Notebook, InventoryNotebookSerializer, Inventory_Mobile, InventoryMobileSerializer
+    Inventory_Notebook, InventoryNotebookSerializer, Inventory_Mobile, InventoryMobileSerializer, Inventory_Datacenter, InventoryDatacenterSerializer
 )
 from rest_framework.response import Response
 from inventory_api.custom_methods import IsAuthenticatedCustom
@@ -15,6 +18,7 @@ from user_control.views import add_user_activity
 from user_control.models import CustomUser
 import csv
 import codecs
+from django.views.generic import View
 
 
 class InventoryView(ModelViewSet):
@@ -109,6 +113,37 @@ class InventoryMobileView(ModelViewSet):
         return super().create(request, *args, **kwargs)
 
 
+class InventoryDatacenterView(ModelViewSet):
+    queryset = Inventory_Datacenter.objects.select_related(
+        "created_by", "colaborador")
+    serializer_class = InventoryDatacenterSerializer
+    permission_classes = (IsAuthenticatedCustom,)
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        if self.request.method.lower() != "get":
+            return self.queryset
+
+        data = self.request.query_params.dict()
+        data.pop("page", None)
+        keyword = data.pop("keyword", None)
+
+        results = self.queryset.filter(**data)
+
+        if keyword:
+            search_fields = (
+                "ip", "created_by__fullname", "created_by__email",
+                "local__name", "colaborador__name"
+            )
+            query = get_query(keyword, search_fields)
+            return results.filter(query)
+        return results
+
+    def create(self, request, *args, **kwargs):
+        request.data.update({"created_by_id": request.user.id})
+        return super().create(request, *args, **kwargs)
+
+
 class InventoryGroupView(ModelViewSet):
     queryset = InventoryGroup.objects.select_related(
         "belongs_to", "created_by").prefetch_related("inventories")
@@ -133,14 +168,8 @@ class InventoryGroupView(ModelViewSet):
             query = get_query(keyword, search_fields)
             results = results.filter(query)
 
-        print('colab',len(results.annotate(
-            total_items=Count(
-                Concat('inventories', Value(', '), 'inventories_notebook'))
-        )))
-
         return results.annotate(
-            total_items=Count(
-                Concat('inventories', Value(', '), 'inventories_notebook'))
+            total_items=Count('inventories') + Count('inventories_notebook')
         )
 
     def create(self, request, *args, **kwargs):
@@ -173,8 +202,7 @@ class ColaboradorView(ModelViewSet):
             results = results.filter(query)
         
         return results.annotate(
-            total_items=Count(
-                Concat('colaborador', Value(', '), 'colaborador_notebook'))
+            total_items=Count('colaborador') + Count('colaborador_notebook') + Count('colaborador_mobile') + Count('colaborador_datacenter')
         )
 
     def create(self, request, *args, **kwargs):
@@ -401,3 +429,19 @@ class InventoryCSVLoaderView(ModelViewSet):
         data_validation.save()
 
         return Response({"success": "Inventory items added successfully"})
+
+class ExportInventoryCSVView(View):
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="inventory.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['Patrimonio', 'Hostname', 'Colaborador', 'Sistema Operacional', 'Service Tag', 'NF SO', 'Empresa', 'Marca', 'Modelo', 'Configuração'])
+
+        inventories = Inventory.objects.all().values_list('patrimonio', 'hostname', 'colaborador__name', 'sistema_operacional', 'service_tag', 'nf_so', 'empresa', 'marca', 'modelo', 'configuracao')
+
+        for inventory in inventories:
+            writer.writerow(inventory)
+
+        return response
