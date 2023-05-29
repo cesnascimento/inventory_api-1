@@ -119,15 +119,16 @@ class Inventory(models.Model):
     )
     patrimonio = models.PositiveIntegerField(null=True, unique=True)
     hostname = models.CharField(max_length=10, null=True, unique=True)
+    usuario = models.CharField(max_length=100, null=True)
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador", null=True, on_delete=models.SET_NULL
     )
     sistema_operacional = models.CharField(max_length=10, null=True)
     service_tag = models.CharField(max_length=10, null=True, unique=True)
-    nf_so = models.PositiveIntegerField(null=True, unique=True)
+    nf_so = models.PositiveIntegerField(null=True)
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=10, null=True)
-    modelo = models.CharField(max_length=10, null=True)
+    modelo = models.CharField(max_length=100, null=True)
     configuracao = models.TextField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -174,12 +175,13 @@ class Inventory_Notebook(models.Model):
     )
     patrimonio = models.PositiveIntegerField(null=True, unique=True)
     hostname = models.CharField(max_length=10, null=True, unique=True)
+    usuario = models.CharField(max_length=100, null=True)
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador_notebook", null=True, on_delete=models.SET_NULL
     )
     sistema_operacional = models.CharField(max_length=10, null=True)
     service_tag = models.CharField(max_length=10, null=True, unique=True)
-    nf_so = models.PositiveIntegerField(null=True, unique=True)
+    nf_so = models.PositiveIntegerField(null=True)
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=10, null=True)
     modelo = models.CharField(max_length=10, null=True)
@@ -229,6 +231,7 @@ class Inventory_Mobile(models.Model):
     patrimonio = models.PositiveIntegerField(null=True, unique=True)
     marca = models.CharField(max_length=10, null=True)
     modelo = models.CharField(max_length=10, null=True)
+    usuario = models.CharField(max_length=100, null=True)
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador_mobile", null=True, on_delete=models.SET_NULL
     )
@@ -283,7 +286,7 @@ class Inventory_Datacenter(models.Model):
     )
     sistema_operacional = models.CharField(max_length=10, null=True)
     service_tag = models.CharField(max_length=10, null=True, unique=True)
-    nf_so = models.PositiveIntegerField(null=True, unique=True)
+    nf_so = models.PositiveIntegerField(null=True)
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=10, null=True)
     modelo = models.CharField(max_length=10, null=True)

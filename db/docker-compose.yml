@@ -1,24 +1,24 @@
 version: "3"
 
 services:
-  inventory_app:
-    container_name: inventory_app
+  dermage_app:
+    container_name: dermage_app
     image: postgres
     environment:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "root"
-      PGDATA: /data/inventory_app
+      PGDATA: /data/dermage_app
     volumes:
-      - inventory_app:/data/inventory_app
+      - dermage_app:/data/dermage_app
     ports:
       - "5434:5432"
     networks:
-      - inventory_app_net
+      - dermage_app_net
     restart: unless-stopped
 
 networks:
-  inventory_app_net:
+  dermage_app_net:
     driver: bridge
 
 volumes:
-  inventory_app:
+  dermage_app:
