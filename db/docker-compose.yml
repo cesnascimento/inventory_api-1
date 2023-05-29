@@ -5,15 +5,9 @@ services:
     container_name: dermage_app
     image: postgres
     environment:
-<<<<<<< HEAD
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "root"
       PGDATA: /data/dermage_app
-=======
-      POSTGRES_USER: "pgadmin"
-      POSTGRES_PASSWORD: "dermage01#"
-      PGDATA: /data/inventory_app
->>>>>>> c8732a03cd82c160ec2433d0493aafb384c15417
     volumes:
       - dermage_app:/data/dermage_app
     ports:

@@ -230,12 +230,8 @@ class Inventory_Mobile(models.Model):
     )
     patrimonio = models.PositiveIntegerField(null=True, unique=True)
     marca = models.CharField(max_length=10, null=True)
-<<<<<<< HEAD
     modelo = models.CharField(max_length=10, null=True)
     usuario = models.CharField(max_length=100, null=True)
-=======
-    modelo = models.CharField(max_length=100, null=True)
->>>>>>> c8732a03cd82c160ec2433d0493aafb384c15417
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador_mobile", null=True, on_delete=models.SET_NULL
     )
