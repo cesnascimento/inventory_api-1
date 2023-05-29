@@ -5,8 +5,8 @@ services:
     container_name: inventory_app
     image: postgres
     environment:
-      POSTGRES_USER: "root"
-      POSTGRES_PASSWORD: "root"
+      POSTGRES_USER: "pgadmin"
+      POSTGRES_PASSWORD: "dermage01#"
       PGDATA: /data/inventory_app
     volumes:
       - inventory_app:/data/inventory_app
