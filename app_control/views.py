@@ -102,7 +102,7 @@ class InventoryMobileView(ModelViewSet):
         if keyword:
             search_fields = (
                 "imei", "created_by__fullname", "created_by__email",
-                "local__name", "patrimonio", "colaborador__name"
+                "marca", "patrimonio", "colaborador__name"
             )
             query = get_query(keyword, search_fields)
             return results.filter(query)
