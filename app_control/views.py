@@ -273,18 +273,16 @@ class SummaryView(ModelViewSet):
     queryset = InventoryView.queryset
 
     def list(self, request, *args, **kwargs):
-        total_inventory = InventoryView.queryset.filter(
-            remaining__gt=0
-        ).count()
-        total_group = InventoryGroupView.queryset.count()
-        total_shop = ShopView.queryset.count()
-        total_users = CustomUser.objects.filter(is_superuser=False).count()
+        total_desktop = InventoryView.queryset.count()
+        total_notebook = InventoryNotebookView.queryset.count()
+        total_mobile = InventoryMobileView.queryset.count()
+        total_datacenter = InventoryDatacenterView.queryset.count()
 
         return Response({
-            "total_inventory": total_inventory,
-            "total_group": total_group,
-            "total_shop": total_shop,
-            "total_users": total_users
+            "total_inventory": total_desktop,
+            "total_group": total_notebook,
+            "total_shop": total_mobile,
+            "total_users": total_datacenter
         })
 
 
