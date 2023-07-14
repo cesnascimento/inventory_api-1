@@ -117,8 +117,8 @@ class Inventory(models.Model):
     local = models.ForeignKey(
         InventoryGroup, related_name="inventories", null=True, on_delete=models.SET_NULL
     )
-    patrimonio = models.PositiveIntegerField(null=True, unique=True)
-    hostname = models.CharField(max_length=10, null=True, unique=True)
+    patrimonio = models.PositiveIntegerField(null=True)
+    hostname = models.CharField(max_length=25, null=True, unique=True)
     usuario = models.CharField(max_length=100, null=True)
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador", null=True, on_delete=models.SET_NULL
@@ -173,8 +173,8 @@ class Inventory_Notebook(models.Model):
     local = models.ForeignKey(
         InventoryGroup, related_name="inventories_notebook", null=True, on_delete=models.SET_NULL
     )
-    patrimonio = models.PositiveIntegerField(null=True, unique=True)
-    hostname = models.CharField(max_length=10, null=True, unique=True)
+    patrimonio = models.PositiveIntegerField(null=True)
+    hostname = models.CharField(max_length=25, null=True, unique=True)
     usuario = models.CharField(max_length=100, null=True)
     colaborador = models.ForeignKey(
         Colaborador, related_name="colaborador_notebook", null=True, on_delete=models.SET_NULL
@@ -228,7 +228,7 @@ class Inventory_Mobile(models.Model):
         CustomUser, null=True, related_name="inventory_mobile_items",
         on_delete=models.SET_NULL
     )
-    patrimonio = models.PositiveIntegerField(null=True, unique=True)
+    patrimonio = models.PositiveIntegerField(null=True)
     marca = models.CharField(max_length=25, null=True)
     modelo = models.CharField(max_length=25, null=True)
     usuario = models.CharField(max_length=100, null=True)
