@@ -124,7 +124,7 @@ class Inventory(models.Model):
         Colaborador, related_name="colaborador", null=True, on_delete=models.SET_NULL
     )
     sistema_operacional = models.CharField(max_length=10, null=True)
-    service_tag = models.CharField(max_length=20, null=True, unique=True)
+    service_tag = models.CharField(max_length=20, null=True)
     nf_so = models.PositiveIntegerField(null=True)
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=10, null=True)
@@ -180,7 +180,7 @@ class Inventory_Notebook(models.Model):
         Colaborador, related_name="colaborador_notebook", null=True, on_delete=models.SET_NULL
     )
     sistema_operacional = models.CharField(max_length=10, null=True)
-    service_tag = models.CharField(max_length=20, null=True, unique=True)
+    service_tag = models.CharField(max_length=20, null=True)
     nf_so = models.PositiveIntegerField(null=True)
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=10, null=True)
@@ -285,7 +285,7 @@ class Inventory_Datacenter(models.Model):
         Colaborador, related_name="colaborador_datacenter", null=True, on_delete=models.SET_NULL
     )
     sistema_operacional = models.CharField(max_length=25, null=True)
-    service_tag = models.CharField(max_length=25, null=True, unique=True)
+    service_tag = models.CharField(max_length=25, null=True)
     nf_so = models.PositiveIntegerField(null=True)
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=25, null=True)

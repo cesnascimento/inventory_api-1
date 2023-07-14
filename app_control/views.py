@@ -40,8 +40,7 @@ class InventoryView(ModelViewSet):
 
         if keyword:
             search_fields = (
-                "empresa", "created_by__fullname", "created_by__email",
-                "local__name", "patrimonio", "colaborador__name"
+                "patrimonio", "colaborador__name",
             )
             query = get_query(keyword, search_fields)
             return results.filter(query)
@@ -71,8 +70,7 @@ class InventoryNotebookView(ModelViewSet):
 
         if keyword:
             search_fields = (
-                "empresa", "created_by__fullname", "created_by__email",
-                "local__name", "patrimonio", "colaborador__name"
+                "patrimonio", "colaborador__name"
             )
             query = get_query(keyword, search_fields)
             return results.filter(query)
@@ -101,8 +99,7 @@ class InventoryMobileView(ModelViewSet):
 
         if keyword:
             search_fields = (
-                "imei", "created_by__fullname", "created_by__email",
-                "marca", "patrimonio", "colaborador__name"
+                "imei", "colaborador__name"
             )
             query = get_query(keyword, search_fields)
             return results.filter(query)
@@ -132,8 +129,7 @@ class InventoryDatacenterView(ModelViewSet):
 
         if keyword:
             search_fields = (
-                "ip", "created_by__fullname", "created_by__email",
-                "local__name", "colaborador__name"
+                "ip"
             )
             query = get_query(keyword, search_fields)
             return results.filter(query)
