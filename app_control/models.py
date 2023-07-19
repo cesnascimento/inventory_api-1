@@ -16,7 +16,7 @@ class InventoryGroup(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ("-created_at",)
+        ordering = ("-id",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -73,40 +73,6 @@ class Colaborador(models.Model):
 
     def __str__(self):
         return self.name
-
-
-""" class Colaborador(models.Model):
-    created_by = models.ForeignKey(
-        CustomUser, null=True, related_name="colaboratte",
-        on_delete=models.SET_NULL
-    )
-    name = models.CharField(max_length=100)
-    inventory_group = models.ForeignKey(InventoryGroup, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ("-created_at",)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.old_name = self.name
-
-    def save(self, *args, **kwargs):
-        action = f"added new colab - '{self.name}'"
-        if self.pk is not None:
-            action = f"updated colab from - '{self.old_name}' to '{self.name}'"
-        super().save(*args, **kwargs)
-        add_user_activity(self.created_by, action=action)
-
-    def delete(self, *args, **kwargs):
-        created_by = self.created_by
-        action = f"deleted colab - '{self.name}'"
-        super().delete(*args, **kwargs)
-        add_user_activity(created_by, action=action)
-
-    def __str__(self):
-        return self.name """
 
 
 class Inventory(models.Model):
@@ -359,7 +325,7 @@ class Shop(models.Model):
         return self.name
 
 
-class Invoice(models.Model):
+""" class Invoice(models.Model):
     created_by = models.ForeignKey(
         CustomUser, null=True, related_name="invoices",
         on_delete=models.SET_NULL
@@ -375,10 +341,10 @@ class Invoice(models.Model):
         created_by = self.created_by
         action = f"deleted invoice - '{self.id}'"
         super().delete(*args, **kwargs)
-        add_user_activity(created_by, action=action)
+        add_user_activity(created_by, action=action) """
 
 
-class InvoiceItem(models.Model):
+""" class InvoiceItem(models.Model):
     invoice = models.ForeignKey(
         Invoice, related_name="invoice_items", on_delete=models.CASCADE
     )
@@ -406,4 +372,4 @@ class InvoiceItem(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.item_code} - {self.quantity}"
+        return f"{self.item_code} - {self.quantity}" """

@@ -1,5 +1,5 @@
 from django.db import models
-from .models import Inventory, InventoryGroup, Shop, Invoice, InvoiceItem, Colaborador, Inventory_Notebook, Inventory_Mobile, Inventory_Datacenter
+from .models import Inventory, InventoryGroup, Shop, Colaborador, Inventory_Notebook, Inventory_Mobile, Inventory_Datacenter
 from user_control.serializers import CustomUserSerializer
 from rest_framework import serializers
 
@@ -107,7 +107,7 @@ class ShopWithAmountSerializer(ShopSerializer):
     month = serializers.CharField(required=False)
 
 
-class InvoiceItemSeriliazer(serializers.ModelSerializer):
+""" class InvoiceItemSeriliazer(serializers.ModelSerializer):
     invoice = serializers.CharField(read_only=True)
     invoice_id = serializers.CharField(write_only=True)
     item = InventorySerializer(read_only=True)
@@ -153,6 +153,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
             invoice.delete()
             raise Exception(invoice_item_serializer.errors)
 
-        return invoice
+        return invoice """
 
         

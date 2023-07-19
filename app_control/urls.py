@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import (
-    ExportInventoryCSVView, InventoryView, ShopView, SummaryView, PurchaseView, SaleByShopView,
-    InventoryGroupView, SalePerformanceView, InvoiceView, InventoryCSVLoaderView, 
+    ExportInventoryCSVView, InventoryView, ShopView, SummaryView, SaleByShopView,
+    InventoryGroupView, SalePerformanceView, InventoryCSVLoaderView, 
     ColaboradorView, InventoryNotebookView, InventoryMobileView,
     InventoryDatacenterView
 )
@@ -17,11 +17,9 @@ router.register('inventory-datacenter', InventoryDatacenterView, "inventory-data
 router.register('inventory-csv', InventoryCSVLoaderView, "inventory-csv")
 router.register('shop', ShopView, "shop")
 router.register('summary', SummaryView, "summary")
-router.register('purchase-summary', PurchaseView, "purchase-summary")
 router.register('sales-by-shop', SaleByShopView, "sales-by-shop")
 router.register('group', InventoryGroupView, "group")
 router.register('top-selling', SalePerformanceView, "top-selling")
-router.register('invoice', InvoiceView, "invoice")
 router.register('colaborate', ColaboradorView, "colaborate")
 
 urlpatterns = [

@@ -4,8 +4,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import viewsets
 from .serializers import (
     Inventory, InventorySerializer, InventoryGroupSerializer, InventoryGroup,
-    Shop, ShopSerializer, Invoice, InvoiceSerializer, InventoryWithSumSerializer,
-    ShopWithAmountSerializer, InvoiceItem, Colaborador, ColaboradorSerializer, 
+    Shop, ShopSerializer, InventoryWithSumSerializer,
+    ShopWithAmountSerializer, Colaborador, ColaboradorSerializer, 
     Inventory_Notebook, InventoryNotebookSerializer, Inventory_Mobile, InventoryMobileSerializer, Inventory_Datacenter, InventoryDatacenterSerializer
 )
 from rest_framework.response import Response
@@ -142,7 +142,7 @@ class InventoryDatacenterView(ModelViewSet):
 
 class InventoryGroupView(ModelViewSet):
     queryset = InventoryGroup.objects.select_related(
-        "belongs_to", "created_by").prefetch_related("inventories")
+        "belongs_to", "created_by").prefetch_related("inventories", "inventories_notebook")
     serializer_class = InventoryGroupSerializer
     permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
@@ -164,8 +164,9 @@ class InventoryGroupView(ModelViewSet):
             query = get_query(keyword, search_fields)
             results = results.filter(query)
 
+        #print('resulta', total_items=Count('inventories') + Count('inventories_notebook')
         return results.annotate(
-            total_items=Count('inventories') + Count('inventories_notebook')
+            total_items=Count('inventories', distinct=True) + Count('inventories_notebook', distinct=True)
         )
 
     def create(self, request, *args, **kwargs):
@@ -175,7 +176,7 @@ class InventoryGroupView(ModelViewSet):
 
 class ColaboradorView(ModelViewSet):
     queryset = Colaborador.objects.select_related(
-        "created_by").prefetch_related("colaborador")
+        "created_by").prefetch_related("colaborador", "colaborador_notebook", "colaborador_mobile", "colaborador_datacenter")
     serializer_class = ColaboradorSerializer
     permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
@@ -190,6 +191,8 @@ class ColaboradorView(ModelViewSet):
 
         results = self.queryset.filter(**data)
 
+        print('aqui results', results)
+
         if keyword:
             search_fields = (
                 "created_by__fullname", "created_by__email", "name"
@@ -198,7 +201,7 @@ class ColaboradorView(ModelViewSet):
             results = results.filter(query)
         
         return results.annotate(
-            total_items=Count('colaborador') + Count('colaborador_notebook') + Count('colaborador_mobile') + Count('colaborador_datacenter')
+            total_items=Count('colaborador', distinct=True) + Count('colaborador_notebook', distinct=True) + Count('colaborador_mobile', distinct=True) + Count('colaborador_datacenter', distinct=True)
         )
 
     def create(self, request, *args, **kwargs):
@@ -236,7 +239,7 @@ class ShopView(ModelViewSet):
         return super().create(request, *args, **kwargs)
 
 
-class InvoiceView(ModelViewSet):
+""" class InvoiceView(ModelViewSet):
     queryset = Invoice.objects.select_related(
         "created_by", "shop").prefetch_related("invoice_items")
     serializer_class = InvoiceSerializer
@@ -264,7 +267,7 @@ class InvoiceView(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         request.data.update({"created_by_id": request.user.id})
-        return super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs) """
 
 
 class SummaryView(ModelViewSet):
@@ -325,7 +328,7 @@ class SaleByShopView(ModelViewSet):
         query_data = request.query_params.dict()
         total = query_data.get('total', None)
         monthly = query_data.get('monthly', None)
-        query = ShopView.queryset
+        query = InventoryView.queryset
 
         if not total:
             start_date = query_data.get("start_date", None)
@@ -353,7 +356,7 @@ class SaleByShopView(ModelViewSet):
         return Response(response_data)
 
 
-class PurchaseView(ModelViewSet):
+""" class PurchaseView(ModelViewSet):
     http_method_names = ('get',)
     permission_classes = (IsAuthenticatedCustom,)
     queryset = InvoiceView.queryset
@@ -379,7 +382,7 @@ class PurchaseView(ModelViewSet):
         return Response({
             "price": "0.00" if not query.get("amount_total") else query.get("amount_total"),
             "count": 0 if not query.get("total") else query.get("total"),
-        })
+        }) """
 
 
 class InventoryCSVLoaderView(ModelViewSet):
