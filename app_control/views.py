@@ -191,8 +191,6 @@ class ColaboradorView(ModelViewSet):
 
         results = self.queryset.filter(**data)
 
-        print('aqui results', results)
-
         if keyword:
             search_fields = (
                 "created_by__fullname", "created_by__email", "name"
