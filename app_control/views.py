@@ -164,11 +164,14 @@ class InventoryGroupView(ModelViewSet):
             query = get_query(keyword, search_fields)
             results = results.filter(query)
 
-        #print('resulta', total_items=Count('inventories') + Count('inventories_notebook')
+
         return results.annotate(
-            total_items=Count('inventories', distinct=True) + Count('inventories_notebook', distinct=True)
+            desktop_items=Count('inventories', distinct=True),
+            notebook_items=Count('inventories_notebook', distinct=True),
+            total_items=Count('inventories', distinct=True) + Count('inventories_notebook', distinct=True),
         )
 
+        
     def create(self, request, *args, **kwargs):
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)

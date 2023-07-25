@@ -10,6 +10,8 @@ class InventoryGroupSerializer(serializers.ModelSerializer):
     belongs_to = serializers.SerializerMethodField(read_only=True)
     belongs_to_id = serializers.CharField(write_only=True, required=False)
     total_items = serializers.CharField(read_only=True, required=False)
+    desktop_items = serializers.CharField(read_only=True, required=False)
+    notebook_items = serializers.CharField(read_only=True, required=False)
 
     class Meta:
         model = InventoryGroup
