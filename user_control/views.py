@@ -32,7 +32,7 @@ class CreateUserView(ModelViewSet):
 
         CustomUser.objects.create(**valid_request.validated_data)
 
-        add_user_activity(request.user, "added new user")
+        add_user_activity(request.user, "Adicionado novo usuário")
 
         return Response(
             {"success": "User created successfully"},
@@ -81,7 +81,7 @@ class LoginView(ModelViewSet):
         user.last_login = datetime.now()
         user.save()
 
-        add_user_activity(user, "logged in")
+        add_user_activity(user, "Logado em")
 
         return Response({"access": access})
 

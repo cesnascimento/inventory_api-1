@@ -23,15 +23,15 @@ class InventoryGroup(models.Model):
         self.old_name = self.name
 
     def save(self, *args, **kwargs):
-        action = f"added new group - '{self.name}'"
+        action = f"Adicionado novo Local - '{self.name}'"
         if self.pk is not None:
-            action = f"updated group from - '{self.old_name}' to '{self.name}'"
+            action = f"Atualizado novo Local de - '{self.old_name}' para '{self.name}'"
         super().save(*args, **kwargs)
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
         created_by = self.created_by
-        action = f"deleted group - '{self.name}'"
+        action = f"Deletado Local - '{self.name}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
 
@@ -59,15 +59,15 @@ class Colaborador(models.Model):
         self.old_name = self.name
 
     def save(self, *args, **kwargs):
-        action = f"added new group - '{self.name}'"
+        action = f"Adicionado novo colaborador - '{self.name}'"
         if self.pk is not None:
-            action = f"updated group from - '{self.old_name}' to '{self.name}'"
+            action = f"Atualizado novo colaborador - '{self.old_name}' para '{self.name}'"
         super().save(*args, **kwargs)
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
         created_by = self.created_by
-        action = f"deleted group - '{self.name}'"
+        action = f"Deletado colaborador - '{self.name}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
 
@@ -114,16 +114,16 @@ class Inventory(models.Model):
             self.code = f"BOSE{zeros}{self.id}"
             self.save()
 
-        action = f"Adicionado novo item ao inventário com o patrimonio - '{self.patrimonio}'"
+        action = f"Adicionado novo item ao Inventário Desktop com o patrimonio - '{self.patrimonio}'"
 
         if not is_new:
-            action = f"Atualizado item ao inventário com o patrimonio - '{self.patrimonio}'"
+            action = f"Atualizado item ao Inventário Desktop com o patrimonio - '{self.patrimonio}'"
 
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
         created_by = self.created_by
-        action = f"Deletado equipamento - '{self.patrimonio}'"
+        action = f"Deletado equipamento do Inventário Desktop - '{self.patrimonio}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
 
@@ -172,16 +172,16 @@ class Inventory_Notebook(models.Model):
             self.code = f"BOSE{zeros}{self.id}"
             self.save()
 
-        action = f"added new inventory item with code - '{self.patrimonio}'"
+        action = f"Adicionado novo item ao Inventário Notebook com o patrimonio - '{self.patrimonio}'"
 
         if not is_new:
-            action = f"updated inventory item with code - '{self.patrimonio}'"
+            action = f"Atualizado item ao Inventário Notebook com o patrimonio - '{self.patrimonio}'"
 
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
         created_by = self.created_by
-        action = f"deleted inventory - '{self.patrimonio}'"
+        action = f"Deletado equipamento do Inventário Notebook - '{self.patrimonio}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
 
@@ -222,18 +222,34 @@ class Inventory_Mobile(models.Model):
             self.code = f"BOSE{zeros}{self.id}"
             self.save()
 
-        action = f"added new inventory item with patrimonio - '{self.patrimonio}'"
+        action = f"Adicionado novo item ao Inventário Mobile com o patrimonio - '{self.patrimonio}'"
 
         if not is_new:
-            action = f"updated inventory item with patrimonio - '{self.patrimonio}'"
+            action = f"Atualizado item ao Inventário Mobile com o patrimonio - '{self.patrimonio}'"
 
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
         created_by = self.created_by
-        action = f"deleted inventory - '{self.patrimonio}'"
+        action = f"Deletado equipamento do Inventário Mobile - '{self.patrimonio}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
+
+    def move(self, *args, **kwargs):
+        if (self.pk is None): return None
+
+        '''
+            Criar a tabela do Inventario de Depreciados
+            Crie um novo item no inventario de depreciados
+            Copie os dados do item atual para o novo item
+            Delete o item atual
+            Salve o novo item
+            
+        '''
+
+
+
+
 
     def __str__(self):
         return f"{self.modelo} - {self.colaborador}"
@@ -275,16 +291,16 @@ class Inventory_Datacenter(models.Model):
             self.code = f"BOSE{zeros}{self.id}"
             self.save()
 
-        action = f"added new inventory item with patrimonio - '{self.ip}'"
+        action = f"Adicionado novo item ao Inventário DataCenter com o patrimonio - '{self.ip}'"
 
         if not is_new:
-            action = f"updated inventory item with patrimonio - '{self.ip}'"
+            action = f"Atualizado item ao Inventário DataCenter com o patrimonio - '{self.ip}'"
 
         add_user_activity(self.created_by, action=action)
 
     def delete(self, *args, **kwargs):
         created_by = self.created_by
-        action = f"deleted inventory - '{self.ip}'"
+        action = f"Deletado equipamento do Inventário DataCenter - '{self.ip}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
 
