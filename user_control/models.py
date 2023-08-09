@@ -69,11 +69,18 @@ class InventoryActivities(models.Model):
         CustomUser, related_name="inventory_activities", null=True, on_delete=models.SET_NULL)
     email = models.EmailField()
     fullname = models.CharField(max_length=255)
-    action = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    inventario = models.CharField(max_length=255, null=True)
+    patrimonio = models.CharField(max_length=255, null=True)
+    local = models.CharField(max_length=255, null=True)
+    local_novo = models.CharField(max_length=255, null=True)
+    colaborador = models.CharField(max_length=255, null=True)
+    colaborador_novo = models.CharField(max_length=255, null=True)
+    motivo = models.TextField()
+    created_at = models.DateField(auto_now_add=True)
 
     class Meta:
         ordering = ("-created_at", )
 
     def __str__(self):
-        return f"{self.fullname} {self.action} on {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+        return f"{self.fullname} {self.inventario} {self.patrimonio} {self.local} {self.colaborador} {self.local_novo} {self.colaborador_novo} {self.action} on {self.created_at.strftime('%d/%m/%Y')}"
+

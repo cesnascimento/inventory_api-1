@@ -1,6 +1,6 @@
 from django.db import models
 from user_control.models import CustomUser
-from user_control.views import add_user_activity
+from user_control.views import add_user_activity, add_inventory_activity
 
 
 class InventoryGroup(models.Model):
@@ -95,12 +95,17 @@ class Inventory(models.Model):
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=10, null=True)
     modelo = models.CharField(max_length=100, null=True)
-    configuracao = models.TextField(max_length=100, null=True)
+    configuracao = models.TextField(max_length=500, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-created_at",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_local = self.local
+        self.old_colaborador = self.colaborador
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -118,6 +123,15 @@ class Inventory(models.Model):
 
         if not is_new:
             action = f"Atualizado item ao Inventário Desktop com o patrimonio - '{self.patrimonio}'"
+            inventario = 'Desktop'
+            patrimonio = self.patrimonio
+            local = self.old_local
+            local_novo = self.local
+            colaborador = self.old_colaborador
+            colaborador_novo = self.colaborador
+            motivo = self.configuracao
+
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
 
         add_user_activity(self.created_by, action=action)
 
@@ -151,14 +165,18 @@ class Inventory_Notebook(models.Model):
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=10, null=True)
     modelo = models.CharField(max_length=100, null=True)
-    configuracao = models.TextField(max_length=100, null=True)
+    configuracao = models.TextField(max_length=500, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-created_at",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_local = self.local
+        self.old_colaborador = self.colaborador
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -176,6 +194,15 @@ class Inventory_Notebook(models.Model):
 
         if not is_new:
             action = f"Atualizado item ao Inventário Notebook com o patrimonio - '{self.patrimonio}'"
+            inventario = 'Notebook'
+            patrimonio = self.patrimonio
+            local = self.old_local
+            local_novo = self.local
+            colaborador = self.old_colaborador
+            colaborador_novo = self.colaborador
+            motivo = self.configuracao
+
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
 
         add_user_activity(self.created_by, action=action)
 
@@ -209,6 +236,11 @@ class Inventory_Mobile(models.Model):
 
     class Meta:
         ordering = ("-created_by",)
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_colaborador = self.colaborador
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -226,6 +258,15 @@ class Inventory_Mobile(models.Model):
 
         if not is_new:
             action = f"Atualizado item ao Inventário Mobile com o patrimonio - '{self.patrimonio}'"
+            inventario = 'Mobile'
+            patrimonio = self.patrimonio
+            local = ''
+            local_novo = ''
+            colaborador = self.old_colaborador
+            colaborador_novo = self.colaborador
+            motivo = self.obs
+
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
 
         add_user_activity(self.created_by, action=action)
 
@@ -234,19 +275,6 @@ class Inventory_Mobile(models.Model):
         action = f"Deletado equipamento do Inventário Mobile - '{self.patrimonio}'"
         super().delete(*args, **kwargs)
         add_user_activity(created_by, action=action)
-
-    def move(self, *args, **kwargs):
-        if (self.pk is None): return None
-
-        '''
-            Criar a tabela do Inventario de Depreciados
-            Crie um novo item no inventario de depreciados
-            Copie os dados do item atual para o novo item
-            Delete o item atual
-            Salve o novo item
-            
-        '''
-
 
     def __str__(self):
         return f"{self.modelo} - {self.colaborador}"
@@ -269,12 +297,17 @@ class Inventory_Datacenter(models.Model):
     empresa = models.CharField(max_length=50, null=True)
     marca = models.CharField(max_length=25, null=True)
     modelo = models.CharField(max_length=100, null=True)
-    configuracao = models.TextField(max_length=100, null=True)
+    configuracao = models.TextField(max_length=500, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-created_at",)
+    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_colaborador = self.colaborador
 
     def save(self, *args, **kwargs):
         is_new = self.pk is None
@@ -292,6 +325,15 @@ class Inventory_Datacenter(models.Model):
 
         if not is_new:
             action = f"Atualizado item ao Inventário DataCenter com o patrimonio - '{self.ip}'"
+            inventario = 'DataCenter'
+            patrimonio = self.ip
+            local = ''
+            local_novo = ''
+            colaborador = self.old_colaborador
+            colaborador_novo = self.colaborador
+            motivo = self.configuracao
+
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
 
         add_user_activity(self.created_by, action=action)
 

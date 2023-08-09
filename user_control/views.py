@@ -21,12 +21,18 @@ def add_user_activity(user, action):
     )
 
 
-def add_inventory_activity(user, action):
+def add_inventory_activity(user, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo):
     InventoryActivities.objects.create(
         user_id=user.id,
         email=user.email,
         fullname=user.fullname,
-        action=action
+        inventario=inventario,
+        patrimonio=patrimonio,
+        local=local,
+        local_novo=local_novo,
+        colaborador=colaborador,
+        colaborador_novo=colaborador_novo,
+        motivo=motivo
     )
 
 
@@ -174,11 +180,21 @@ class InventoryActivitiesView(ModelViewSet):
         data.pop("page", None)
         keyword = data.pop("keyword", None)
 
+        if "created_at" in data:
+            try:
+                created_at_date = datetime.strptime(data["created_at"], "%d/%m/%Y").date()
+                data["created_at__day"] = created_at_date.day
+                data["created_at__month"] = created_at_date.month
+                data["created_at__year"] = created_at_date.year
+            except ValueError:
+                pass
+
         results = self.queryset.filter(**data)
 
         if keyword:
             search_fields = (
-                "fullname", "email", "action"
+                "inventario", "patrimonio", "local", "local_novo", "colaborador", 
+                "colaborador_novo", "created_at",
             )
             query = get_query(keyword, search_fields)
             results = results.filter(query)
