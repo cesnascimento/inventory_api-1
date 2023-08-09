@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Roles, UserActivities
+from .models import CustomUser, Roles, UserActivities, InventoryActivities
 
 
 class CreateUserSerializer(serializers.Serializer):
@@ -30,4 +30,11 @@ class UserActivitiesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserActivities
+        fields = ("__all__")
+
+
+class InventoryActivitiesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = InventoryActivities
         fields = ("__all__")

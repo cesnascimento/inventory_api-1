@@ -62,3 +62,18 @@ class UserActivities(models.Model):
 
     def __str__(self):
         return f"{self.fullname} {self.action} on {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+
+class InventoryActivities(models.Model):
+    user = models.ForeignKey(
+        CustomUser, related_name="inventory_activities", null=True, on_delete=models.SET_NULL)
+    email = models.EmailField()
+    fullname = models.CharField(max_length=255)
+    action = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at", )
+
+    def __str__(self):
+        return f"{self.fullname} {self.action} on {self.created_at.strftime('%Y-%m-%d %H:%M')}"

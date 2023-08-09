@@ -1,8 +1,9 @@
 from rest_framework.viewsets import ModelViewSet
 from .serializers import (
     CreateUserSerializer, CustomUser, LoginSerializer, UpdatePasswordSerializer,
-    CustomUserSerializer, UserActivities, UserActivitiesSerializer
-)
+    CustomUserSerializer, UserActivities, UserActivitiesSerializer,
+    InventoryActivities, InventoryActivitiesSerializer
+    )
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
@@ -13,6 +14,15 @@ from inventory_api.custom_methods import IsAuthenticatedCustom
 
 def add_user_activity(user, action):
     UserActivities.objects.create(
+        user_id=user.id,
+        email=user.email,
+        fullname=user.fullname,
+        action=action
+    )
+
+
+def add_inventory_activity(user, action):
+    InventoryActivities.objects.create(
         user_id=user.id,
         email=user.email,
         fullname=user.fullname,
@@ -126,6 +136,33 @@ class UserActivitiesView(ModelViewSet):
     serializer_class = UserActivitiesSerializer
     http_method_names = ["get"]
     queryset = UserActivities.objects.all()
+    permission_classes = (IsAuthenticatedCustom, )
+    pagination_class = CustomPagination
+    
+    def get_queryset(self):
+        if self.request.method.lower() != "get":
+            return self.queryset
+
+        data = self.request.query_params.dict()
+        data.pop("page", None)
+        keyword = data.pop("keyword", None)
+
+        results = self.queryset.filter(**data)
+
+        if keyword:
+            search_fields = (
+                "fullname", "email", "action"
+            )
+            query = get_query(keyword, search_fields)
+            results = results.filter(query)
+        
+        return results
+
+
+class InventoryActivitiesView(ModelViewSet):
+    serializer_class = InventoryActivitiesSerializer
+    http_method_names = ["get"]
+    queryset = InventoryActivities.objects.all()
     permission_classes = (IsAuthenticatedCustom, )
     pagination_class = CustomPagination
     
