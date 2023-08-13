@@ -199,6 +199,18 @@ class InventoryActivitiesView(ModelViewSet):
             query = get_query(keyword, search_fields)
             results = results.filter(query)
         
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+
+        if start_date and end_date:
+            try:
+                start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+                end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+                results = results.filter(created_at__range=(start_date, end_date))
+            except ValueError:
+                pass
+        
         return results
 
 
