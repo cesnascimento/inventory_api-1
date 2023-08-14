@@ -12,8 +12,8 @@ class InventoryGroup(models.Model):
     belongs_to = models.ForeignKey(
         'self', null=True, on_delete=models.SET_NULL, related_name="group_relations"
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
 
     class Meta:
         ordering = ("-id",)

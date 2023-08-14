@@ -82,5 +82,5 @@ class InventoryActivities(models.Model):
         ordering = ("-created_at", )
 
     def __str__(self):
-        return f"{self.fullname} {self.inventario} {self.patrimonio} {self.local} {self.colaborador} {self.local_novo} {self.colaborador_novo} {self.action} on {self.created_at.strftime('%d/%m/%Y')}"
+        return f"{self.fullname} {self.inventario} {self.patrimonio} {self.local} {self.colaborador} {self.local_novo} {self.colaborador_novo} {self.motivo} on {self.created_at.strftime('%d/%m/%Y')}"
 

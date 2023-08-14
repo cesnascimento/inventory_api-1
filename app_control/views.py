@@ -306,7 +306,7 @@ class SalePerformanceView(ModelViewSet):
 
             if start_date:
                 query = query.filter(
-                    inventory_invoices__created_at__range=[
+                    created_at__range=[
                         start_date, end_date]
                 )
 

@@ -179,37 +179,26 @@ class InventoryActivitiesView(ModelViewSet):
         data = self.request.query_params.dict()
         data.pop("page", None)
         keyword = data.pop("keyword", None)
-
-        if "created_at" in data:
-            try:
-                created_at_date = datetime.strptime(data["created_at"], "%d/%m/%Y").date()
-                data["created_at__day"] = created_at_date.day
-                data["created_at__month"] = created_at_date.month
-                data["created_at__year"] = created_at_date.year
-            except ValueError:
-                pass
+        start_date = data.pop("start_date", None)
+        end_date = data.pop("end_date", None)
 
         results = self.queryset.filter(**data)
 
         if keyword:
             search_fields = (
                 "inventario", "patrimonio", "local", "local_novo", "colaborador", 
-                "colaborador_novo", "created_at",
+                "colaborador_novo",
             )
             query = get_query(keyword, search_fields)
+            print('aqui query', query)
             results = results.filter(query)
         
-        start_date = self.request.query_params.get("start_date")
-        end_date = self.request.query_params.get("end_date")
-
-        if start_date and end_date:
-            try:
-                start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-                end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-
-                results = results.filter(created_at__range=(start_date, end_date))
-            except ValueError:
-                pass
+        if start_date:
+            query = results.filter(
+                    created_at__range=[start_date, end_date]
+            )
+            print('aqui query', query)
+            results = query
         
         return results
 
