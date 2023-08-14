@@ -21,7 +21,7 @@ def add_user_activity(user, action):
     )
 
 
-def add_inventory_activity(user, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo):
+def add_inventory_activity(user, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo_depreciado):
     InventoryActivities.objects.create(
         user_id=user.id,
         email=user.email,
@@ -32,7 +32,7 @@ def add_inventory_activity(user, inventario, patrimonio, local, local_novo, cola
         local_novo=local_novo,
         colaborador=colaborador,
         colaborador_novo=colaborador_novo,
-        motivo=motivo
+        motivo_depreciado=motivo_depreciado
     )
 
 
@@ -97,7 +97,7 @@ class LoginView(ModelViewSet):
         user.last_login = datetime.now()
         user.save()
 
-        add_user_activity(user, "Logado em")
+        add_user_activity(user, "Logou as")
 
         return Response({"access": access})
 
@@ -122,7 +122,7 @@ class UpdatePasswordView(ModelViewSet):
         user.set_password(valid_request.validated_data["password"])
         user.save()
 
-        add_user_activity(user, "updated password")
+        add_user_activity(user, "Atualizou a senha")
 
         return Response({"success": "User password updated"})
 
@@ -190,14 +190,12 @@ class InventoryActivitiesView(ModelViewSet):
                 "colaborador_novo",
             )
             query = get_query(keyword, search_fields)
-            print('aqui query', query)
             results = results.filter(query)
         
         if start_date:
             query = results.filter(
                     created_at__range=[start_date, end_date]
             )
-            print('aqui query', query)
             results = query
         
         return results

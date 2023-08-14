@@ -75,12 +75,12 @@ class InventoryActivities(models.Model):
     local_novo = models.CharField(max_length=255, null=True)
     colaborador = models.CharField(max_length=255, null=True)
     colaborador_novo = models.CharField(max_length=255, null=True)
-    motivo = models.TextField()
+    motivo_depreciado = models.TextField(max_length=500, null=True)
     created_at = models.DateField(auto_now_add=True)
 
     class Meta:
         ordering = ("-created_at", )
 
     def __str__(self):
-        return f"{self.fullname} {self.inventario} {self.patrimonio} {self.local} {self.colaborador} {self.local_novo} {self.colaborador_novo} {self.motivo} on {self.created_at.strftime('%d/%m/%Y')}"
+        return f"{self.fullname} {self.inventario} {self.patrimonio} {self.local} {self.colaborador} {self.local_novo} {self.colaborador_novo} {self.motivo_depreciado} on {self.created_at.strftime('%d/%m/%Y')}"
 

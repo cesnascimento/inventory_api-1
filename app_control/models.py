@@ -12,8 +12,8 @@ class InventoryGroup(models.Model):
     belongs_to = models.ForeignKey(
         'self', null=True, on_delete=models.SET_NULL, related_name="group_relations"
     )
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ("-id",)
@@ -96,6 +96,7 @@ class Inventory(models.Model):
     marca = models.CharField(max_length=10, null=True)
     modelo = models.CharField(max_length=100, null=True)
     configuracao = models.TextField(max_length=500, null=True)
+    motivo_depreciado = models.TextField(max_length=500, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -129,9 +130,8 @@ class Inventory(models.Model):
             local_novo = self.local
             colaborador = self.old_colaborador
             colaborador_novo = self.colaborador
-            motivo = self.configuracao
-
-            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
+            motivo_depreciado = self.motivo_depreciado
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo_depreciado)
 
         add_user_activity(self.created_by, action=action)
 
@@ -166,6 +166,7 @@ class Inventory_Notebook(models.Model):
     marca = models.CharField(max_length=10, null=True)
     modelo = models.CharField(max_length=100, null=True)
     configuracao = models.TextField(max_length=500, null=True)
+    motivo_depreciado = models.TextField(max_length=500, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -200,9 +201,9 @@ class Inventory_Notebook(models.Model):
             local_novo = self.local
             colaborador = self.old_colaborador
             colaborador_novo = self.colaborador
-            motivo = self.configuracao
+            motivo_depreciado = self.motivo_depreciado
 
-            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo_depreciado)
 
         add_user_activity(self.created_by, action=action)
 
@@ -232,6 +233,9 @@ class Inventory_Mobile(models.Model):
     nf = models.CharField(max_length=50, null=True)
     linha = models.CharField(max_length=50, null=True)
     obs = models.TextField(max_length=500, null=True)
+    motivo_depreciado = models.TextField(max_length=500, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
     class Meta:
@@ -264,9 +268,9 @@ class Inventory_Mobile(models.Model):
             local_novo = ''
             colaborador = self.old_colaborador
             colaborador_novo = self.colaborador
-            motivo = self.obs
+            motivo_depreciado = self.motivo_depreciado
 
-            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo_depreciado)
 
         add_user_activity(self.created_by, action=action)
 
@@ -298,6 +302,7 @@ class Inventory_Datacenter(models.Model):
     marca = models.CharField(max_length=25, null=True)
     modelo = models.CharField(max_length=100, null=True)
     configuracao = models.TextField(max_length=500, null=True)
+    motivo_depreciado = models.TextField(max_length=500, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -331,9 +336,9 @@ class Inventory_Datacenter(models.Model):
             local_novo = ''
             colaborador = self.old_colaborador
             colaborador_novo = self.colaborador
-            motivo = self.configuracao
+            motivo_depreciado = self.motivo_depreciado
 
-            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo)
+            add_inventory_activity(self.created_by, inventario, patrimonio, local, local_novo, colaborador, colaborador_novo, motivo_depreciado)
 
         add_user_activity(self.created_by, action=action)
 
