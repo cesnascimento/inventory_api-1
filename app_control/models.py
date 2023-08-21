@@ -263,7 +263,7 @@ class Inventory_Mobile(models.Model):
         if not is_new:
             action = f"Atualizado item ao Inventário Mobile com o patrimonio - '{self.patrimonio}'"
             inventario = 'Mobile'
-            patrimonio = self.patrimonio
+            patrimonio = self.imei
             local = ''
             local_novo = ''
             colaborador = self.old_colaborador
