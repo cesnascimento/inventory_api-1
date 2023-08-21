@@ -187,7 +187,7 @@ class InventoryActivitiesView(ModelViewSet):
         if keyword:
             search_fields = (
                 "inventario", "patrimonio", "local", "local_novo", "colaborador", 
-                "colaborador_novo",
+                "colaborador_novo", "motivo_depreciado"
             )
             query = get_query(keyword, search_fields)
             results = results.filter(query)
