@@ -77,7 +77,6 @@ class InventoryNotebookView(ModelViewSet):
         return results
 
     def create(self, request, *args, **kwargs):
-        permission_classes = (IsAuthenticatedCustom,)
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)
     

@@ -92,7 +92,6 @@ class LoginView(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        print('AQUI ID AQUI', user)
         access = get_access_token({"user_id": user.id}, 1)
 
         user.last_login = datetime.now()

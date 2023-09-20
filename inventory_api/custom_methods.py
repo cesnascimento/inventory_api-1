@@ -1,4 +1,6 @@
+from django import views
 from rest_framework.permissions import BasePermission
+
 from .utils import decodeJWT
 from rest_framework.views import exception_handler
 from rest_framework.response import Response
@@ -7,6 +9,8 @@ from rest_framework.response import Response
 class IsAuthenticatedCustom(BasePermission):
 
     def has_permission(self, request, _):
+        if request.method.lower() == 'get' and views.__class__.__name__ != 'LoginView':
+            return True
         try:
             auth_token = request.META.get("HTTP_AUTHORIZATION", None)
         except Exception:
