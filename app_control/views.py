@@ -25,6 +25,7 @@ class InventoryView(ModelViewSet):
     queryset = Inventory.objects.select_related(
         "local", "created_by", "colaborador")
     serializer_class = InventorySerializer
+    permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -54,6 +55,7 @@ class InventoryNotebookView(ModelViewSet):
     queryset = Inventory_Notebook.objects.select_related(
         "local", "created_by", "colaborador")
     serializer_class = InventoryNotebookSerializer
+    permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -75,6 +77,7 @@ class InventoryNotebookView(ModelViewSet):
         return results
 
     def create(self, request, *args, **kwargs):
+        permission_classes = (IsAuthenticatedCustom,)
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)
     
@@ -82,6 +85,7 @@ class InventoryMobileView(ModelViewSet):
     queryset = Inventory_Mobile.objects.select_related(
         "created_by", "colaborador")
     serializer_class = InventoryMobileSerializer
+    permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -111,6 +115,7 @@ class InventoryDatacenterView(ModelViewSet):
     queryset = Inventory_Datacenter.objects.select_related(
         "created_by", "colaborador")
     serializer_class = InventoryDatacenterSerializer
+    permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -140,6 +145,7 @@ class InventoryGroupView(ModelViewSet):
     queryset = InventoryGroup.objects.select_related(
         "belongs_to", "created_by").prefetch_related("inventories", "inventories_notebook")
     serializer_class = InventoryGroupSerializer
+    permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
