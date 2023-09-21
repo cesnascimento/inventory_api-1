@@ -19,13 +19,15 @@ from user_control.models import CustomUser
 import csv
 import codecs
 from django.views.generic import View
+from rest_framework import status
+
 
 
 class InventoryView(ModelViewSet):
     queryset = Inventory.objects.select_related(
         "local", "created_by", "colaborador")
     serializer_class = InventorySerializer
-    permission_classes = (IsAuthenticatedCustom,)
+    #permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -47,6 +49,8 @@ class InventoryView(ModelViewSet):
         return results
 
     def create(self, request, *args, **kwargs):
+        if not IsAuthenticatedCustom().has_permission(request, self):
+            return Response({"detail": "Não autorizado"})
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)
 
@@ -55,7 +59,7 @@ class InventoryNotebookView(ModelViewSet):
     queryset = Inventory_Notebook.objects.select_related(
         "local", "created_by", "colaborador")
     serializer_class = InventoryNotebookSerializer
-    permission_classes = (IsAuthenticatedCustom,)
+    #permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -77,6 +81,8 @@ class InventoryNotebookView(ModelViewSet):
         return results
 
     def create(self, request, *args, **kwargs):
+        if not IsAuthenticatedCustom().has_permission(request, self):
+            return Response({"detail": "Não autorizado"})
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)
     
@@ -84,7 +90,7 @@ class InventoryMobileView(ModelViewSet):
     queryset = Inventory_Mobile.objects.select_related(
         "created_by", "colaborador")
     serializer_class = InventoryMobileSerializer
-    permission_classes = (IsAuthenticatedCustom,)
+    #permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -106,6 +112,8 @@ class InventoryMobileView(ModelViewSet):
         return results
 
     def create(self, request, *args, **kwargs):
+        if not IsAuthenticatedCustom().has_permission(request, self):
+            return Response({"detail": "Não autorizado"})
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)
 
@@ -114,7 +122,7 @@ class InventoryDatacenterView(ModelViewSet):
     queryset = Inventory_Datacenter.objects.select_related(
         "created_by", "colaborador")
     serializer_class = InventoryDatacenterSerializer
-    permission_classes = (IsAuthenticatedCustom,)
+    #permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -135,7 +143,10 @@ class InventoryDatacenterView(ModelViewSet):
             return results.filter(query)
         return results
 
+
     def create(self, request, *args, **kwargs):
+        if not IsAuthenticatedCustom().has_permission(request, self):
+            return Response({"detail": "Não autorizado"})
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)
 
@@ -144,7 +155,7 @@ class InventoryGroupView(ModelViewSet):
     queryset = InventoryGroup.objects.select_related(
         "belongs_to", "created_by").prefetch_related("inventories", "inventories_notebook")
     serializer_class = InventoryGroupSerializer
-    permission_classes = (IsAuthenticatedCustom,)
+    #permission_classes = (IsAuthenticatedCustom,)
     pagination_class = CustomPagination
 
     def get_queryset(self):
@@ -170,9 +181,10 @@ class InventoryGroupView(ModelViewSet):
             notebook_items=Count('inventories_notebook', distinct=True),
             total_items=Count('inventories', distinct=True) + Count('inventories_notebook', distinct=True),
         )
-
-        
+   
     def create(self, request, *args, **kwargs):
+        if not IsAuthenticatedCustom().has_permission(request, self):
+            return Response({"detail": "Não autorizado"})
         request.data.update({"created_by_id": request.user.id})
         return super().create(request, *args, **kwargs)
 
@@ -280,13 +292,15 @@ class SummaryView(ModelViewSet):
         total_notebook = InventoryNotebookView.queryset.count()
         total_mobile = InventoryMobileView.queryset.count()
         total_datacenter = InventoryDatacenterView.queryset.count()
+        """ outros = InventoryDatacenterView.queryset """
 
         return Response({
             "total_inventory": total_desktop,
             "total_group": total_notebook,
             "total_shop": total_mobile,
-            "total_users": total_datacenter
+            "total_users": total_datacenter,
         })
+
 
 
 class SalePerformanceView(ModelViewSet):
