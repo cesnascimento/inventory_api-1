@@ -445,12 +445,60 @@ class ExportInventoryCSVView(View):
 
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="inventory.csv"'
+        response['Content-Disposition'] = 'attachment; filename="inventory-desktop.csv"'
 
         writer = csv.writer(response)
         writer.writerow(['Patrimonio', 'Hostname', 'Colaborador', 'Sistema Operacional', 'Service Tag', 'NF SO', 'Empresa', 'Marca', 'Modelo', 'Configuração'])
 
         inventories = Inventory.objects.all().values_list('patrimonio', 'hostname', 'colaborador__name', 'sistema_operacional', 'service_tag', 'nf_so', 'empresa', 'marca', 'modelo', 'configuracao')
+
+        for inventory in inventories:
+            writer.writerow(inventory)
+
+        return response
+
+class ExportInventoryNotebookCSVView(View):
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="inventory-notebook.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['Patrimonio', 'Hostname', 'Colaborador', 'Sistema Operacional', 'Service Tag', 'NF SO', 'Empresa', 'Marca', 'Modelo', 'Configuração'])
+
+        inventories = Inventory_Notebook.objects.all().values_list('patrimonio', 'hostname', 'colaborador__name', 'sistema_operacional', 'service_tag', 'nf_so', 'empresa', 'marca', 'modelo', 'configuracao')
+
+        for inventory in inventories:
+            writer.writerow(inventory)
+
+        return response
+
+class ExportInventoryMobileCSVView(View):
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="inventory-mobile.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['Patrimonio', 'Marca', 'Modelo', 'Usuário', 'Colaborador', 'IMEI', 'NF', 'Linha'])
+
+        inventories = Inventory_Mobile.objects.all().values_list('patrimonio', 'marca', 'modelo', 'usuario', 'colaborador__name', 'imei', 'nf', 'linha')
+
+        for inventory in inventories:
+            writer.writerow(inventory)
+
+        return response
+
+class ExportInventoryDatacenterCSVView(View):
+
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="inventory-datacenter.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(['IP', 'Descrição', 'HostName', 'Colaborador', 'Sistema Operacional', 'Service Tag', 'NF', 'Empresa', 'Marca', 'Modelo', 'Configuração'])
+
+        inventories = Inventory_Datacenter.objects.all().values_list('ip', 'descricao', 'hostname', 'colaborador__name', 'sistema_operacional', 'service_tag', 'nf_so', 'empresa', 'marca', 'modelo', 'configuracao')
 
         for inventory in inventories:
             writer.writerow(inventory)
